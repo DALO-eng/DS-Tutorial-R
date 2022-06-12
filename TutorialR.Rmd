@@ -37,6 +37,186 @@ output: html_notebook
 ```
 
 7-      Ejemplos de visualización de datos: Gráficas diversas incluyendo dispersión de puntos, histogramas, diagrama de cajas (bloxpots), violinplots, etc.
-```{r}
 
+LOs gráficos en R se pueden realizar de forma básica usando las funciones integradas en el lenguaje o avanzada con el paquete ggplot2.
+
+```{r}
+if(!require("AER")) {install.packages("AER")}
+#data(package="AER")
+#library(AER)
+data("CPS1985")
 ```
+Histograma
+```{r}
+attach(CPS1985)   # acceder directamente a las variables (columnas)
+hist(wage,
+     breaks = 20,   # número de intervalos
+     main = "Distribución del Salario (dólares por hora)",    # título del gráfico
+     xlab = "Salario",                                        # título del eje x
+     ylab = "Número de personas",                              # título del eje y
+     xlim = c(0,50),                      # rango de valores del eje x
+     col = "blue",                        # color de relleno
+     border = "white"                     # color del borde del rectángulo
+     )
+```
+```{r}
+hist(wage,
+     breaks = 20,   
+     main = "Distribución del Salario (dólares por hora)", 
+     freq = FALSE,
+     xlab = "Salario",                                          
+     ylab = "Frecuencia relativa (en tanto por uno)", 
+     xlim = c(0,50),
+     ylim = c(0,0.15),
+     col = "blue",
+     border = "white"
+     )
+
+lines(density(wage), col="yellow", lwd=3)  # dibujamos la distribución normal empírica con los  datos que tenemos
+
+lines(density(wage, adjust=2), col="red", lwd=3, lty=2) # adjust=2 lo que hace es suavizar un poco la curva (probad con adjust=1 y adjust=5 para ver las diferencias).
+curve(dnorm(x, mean=mean(wage), sd=sd(wage)), add=TRUE, col="orange", lwd=3)  # aquí simulamos valores de una normal con la misma media y deviación típica que wage y la representamos.
+abline(v=mean(wage), lwd=2, lty=3, col="darkblue")    # añadimos posición de la media. Recordemos que e argumento "lwd"" hace referencia al grosor de la línea y "lty"" al tipo de línea.
+```
+Boxplot
+```{r}
+boxplot(wage ~ gender,
+        main = "Salario (dólares hora) según género",
+        ylab = "Salario",
+        names = c("Hombres","Mujeres")   # cambiamos la etiqueta de la variable cualitativa
+        )
+```
+```{r}
+a <- rainbow(6)
+b <- rainbow(6, alpha=0.2)
+c <- rainbow(6, v=0.5)
+
+
+boxplot(wage ~ occupation,
+        col = b,       
+        boxcol = c,     
+        medcol = c,   
+        whiskcol = a,  
+        staplecol = c,   
+        outcol = c,    
+        outbg = c,     
+        pch = 20,        
+        cex = 1,         
+        horizontal = T,  
+        main = "Salario (dólares hora) según ocupación",
+        xlab = "Salario",
+        yaxt = "n"              # elminamos el eje y
+        )
+
+legend("bottomright", title="Salario (dólares hora)", levels(occupation), fill=b)
+```
+Diagrama de dispersiòn
+```{r}
+sexo <- as.numeric(gender)
+
+plot (log(wage) ~ experience,
+      pch = sexo,
+      col = sexo,
+      main = "Salario (en logaritmos) en función de la experiencia",
+      xlab = "Experiencia (en años)",
+      ylab = "Salario (en logaritmos)"
+      )
+
+with(CPS1985[gender=="male",], abline(lm(log(wage)~experience), col="red"))
+with(CPS1985[gender=="female",], abline(lm(log(wage)~experience), col="black"))
+
+legend("topright", legend=c("Hombres","Mujeres"), pch=1:2, col=1:2, bty="y")
+```
+
+Diagrama de barras
+```{r}
+educacion <- table(education)
+p <- barplot(educacion,
+        col = 1:dim(educacion),       # para establecer el número de diferentes colores                                       (=diferentes valores)
+        space = 0,                    # no espacio entre las barras
+        horiz = F,                    # orientación de las barras
+        density = 50 ,                # trama de las barras (se puede modificar el ángulo con                                     el argumento angle)
+        ylim = c(0,250)
+        )
+
+title("Distribución de la edad", xlab= "Edad (en años)")
+text(p[,1],educacion,labels=educacion, pos=3,cex=0.75)
+```
+```{r}
+p <- table(ethnicity, gender) 
+barplot(p,
+        beside=T,  # si es FALSE apila
+        col=rainbow(3),
+        legend=levels(ethnicity),
+        names.arg= levels(gender),
+        ylim=c(0,250)
+        
+)
+```
+Grafico de sectores
+```{r}
+datos <- table(ethnicity)
+pie(datos, 
+    labels=c("Caucásicos", "Hispanos", "Otros"), 
+    col=heat.colors(3),
+    main= "Gráfico de sectores")
+```
+Gráfico de mosaico
+
+```{r}
+install.packages("vcd")
+library(vcd)
+datos <- ftable(occupation, ethnicity, gender)
+mosaic(~ occupation + ethnicity + gender , dat=datos, las=1)
+```
+Violinplot
+
+```{r}
+install.packages("vioplot")
+library(vioplot)
+x <- c(6, 9, 0, 19, -1, 8, 12, 5, 3, 7,
+       2, 4, 3, -8, -9, 8, 4, 12, 5, 14)
+vioplot(x,
+        col = 2,               # Color del área
+        rectCol = "red",       # Color del rectángulo
+        lineCol = "white",     # Color de la línea
+        colMed = "green",      # Color del símbolo pch
+        border = "black",      # Color del borde del violín
+        pchMed = 16,           # Símbolo pch para la mediana
+        plotCentre = "points", # Si "line", dibuja una línea en la mediana
+        horizontal = TRUE)
+```
+
+
+```{r}
+data <- chickwts
+
+stripchart(data$weight ~ data$feed, vertical = TRUE, method = "jitter",
+           pch = 19, add = TRUE, col = 3:8)
+```
+
+
+Ahora, veremos los gràficos con ggplot2:
+
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+
+```{r}
+ggplot(CPS1985, aes(x=wage)) + 
+  geom_histogram(bins=20, color="white", fill="blue") +
+  facet_grid(gender~.)
+```
+```{r}
+ggplot(CPS1985, aes(x=wage)) + 
+  geom_histogram(aes(y=..density..), bins=20, color="white", fill="grey") + 
+  stat_function(fun = dnorm, colour = "red",
+                args = list(mean = mean(wage, na.rm = TRUE),
+                                 sd = sd(wage, na.rm = TRUE))) +
+  geom_line(stat="density", color="blue") +
+  expand_limits(y=0)
+```
+
+
