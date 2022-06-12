@@ -74,9 +74,43 @@ for(i in 1:10) { #Imprime números del 1 al 10, pero si i vale 5, se omite.
 ```
 
 
-2-      Vectores en R. Creación, indexación, edición. Genere una secuencia de números utilizando un generador congruencial lineal.
-```{r}
+# 2. Vectores en R. Creación, indexación, edición.
 
+Un vector es la estructura de datos más sencilla en R. Un vector es una colección de uno o más datos del mismo tipo. Estos vectores tienen un tipo, largo y atributos.
+```{r}
+#CREACION DE VECTORES
+#Para crear un vector debemos utilizar la funcion c()
+
+c(1,2,3,4); #Vector de numeros
+c('Hola', 'como', 'estas?'); #Vector de texto
+c(FALSE, TRUE, FALSE) #Vector booleano
+
+#También podemos generar vectores con :
+1:10
+-10:-1
+
+#Podemos añadir valores nuevos a los vectores:
+miVector = c(1,2,3,4);
+c(miVector, 5);
+
+#Podemos realizar operaciones generales:
+miVector + 2
+miVector * 2
+miVector / 2
+miVector < 2
+
+#INDEXACION
+#Podemos acceder a las posiciones de los vectores mediante []:
+miVector[1]; #Primer valor
+miVector[-1]; #Todos excepto el primer valor
+miVector[miVector<2] #Los valores menores a 2
+miVector[1:3] #Posicion 1 a 3
+miVector[-1:-3] #Todos excepto los de posición 1 a 3
+
+#EDICION
+#Podemos cambiar los valores del vector en cualquier momento
+miVector[1:4] = 5;
+miVector
 ```
 
 3-      Listas y matrices en R. Explique algunas operaciones matriciales básicas
