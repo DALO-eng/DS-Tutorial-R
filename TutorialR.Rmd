@@ -3,11 +3,74 @@ title: "Tutorial de R"
 output: html_notebook
 ---
 
+# 0. Conceptos básicos
 
-
-1-      Estructuras de control en R. Realice un ejemplo para las estructuras de control que encuentre en R
+Antes de comenzar el tutorial, debemos recordar como se declaran e inicializan las variables en el lenguaje de programación R.
 ```{r}
+#Las variables se pueden declarar e inicializar de dos maneras:
 
+version1 <- "Primera versión"; #Flecha
+version2 = "Segunda versión"; #Igual
+
+#Las variables pueden tener los siguientes tipos de datos:
+
+numero <- 69;
+texto = "Texto";
+booleano <- TRUE;
+```
+
+
+# 1. Estructuras de control en R
+
+Como su nombre lo indica, las estructuras de control nos permiten controlar la manera en que se ejecuta nuestro código.
+
+Las estructuras de control establecen condicionales en nuestros código. Por ejemplo, qué condiciones deben cumplirse para realizar una operación o qué debe ocurrir para ejecutar una función.
+
+Esto es de gran utilidad para determinar la lógica y el orden en que ocurren las operaciones, en especial al definir funciones.
+```{r}
+#Las estructuras de control más usadas en R son las siguientes.
+
+#IF / ELSE - Es utilizado cuando queremos que una función se ejecute cuando se cumpla o no una condición.
+
+edad = 20;
+
+if( edad >= 18) { #CONDICION: Si la edad es mayor o igual a 18...
+  print('Eres mayor de edad'); #Imprimir Eres mayor de edad
+} else { #Si no es mayor o igual a 18
+  print('No eres mayor de edad'); #Imprimir Eres menor de edad
+}
+
+#FOR - Nos permite ejecutar un bucle, realizando una operación para cada elemento de un conjunto de datos.
+
+for(multiplo in 1:10) { #Se van a imprimir los primeros 10 múltiplos de 5 
+  print(5 * multiplo);
+}
+
+#WHILE - Este es un tipo de bucle que ocurre mientras una condición es verdadera (TRUE). La operación se realiza hasta que se se llega a cumplir un criterio previamente establecido.
+
+limite <- 5
+valor <- 0
+
+while(valor < limite) { #Mientras valor sea menor a limite, imprime Todavia no y aumentale 1 a valor
+  print("Todavía no.")
+  valor <- valor + 1
+}
+
+#BREAK Y NEXT - son palabras reservadas en R, no podemos asignarles nuevos valores y realizan una operación específica cuando aparecen en nuestro código. break nos permite interrumpir un bucle, mientras que next nos deja avanzar a la siguiente iteración del bucle, “saltándose” la actual. Ambas funcionan para for y while.
+
+for(i in 1:10) { #Imprime números del 1 al 10, pero si i vale 5, interrumpe el proceso.
+  if(i == 5) {
+    break
+  }
+  print(i)
+}
+
+for(i in 1:10) { #Imprime números del 1 al 10, pero si i vale 5, se omite.
+  if(i == 5) {
+    next
+  }
+  print(i)
+}
 ```
 
 
