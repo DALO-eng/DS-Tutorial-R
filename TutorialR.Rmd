@@ -199,34 +199,21 @@ setdiff(mi_lista, mi_lista2)
 
 7-      Ejemplos de visualización de datos: Gráficas diversas incluyendo dispersión de puntos, histogramas, diagrama de cajas (bloxpots), violinplots, etc.
 
-LOs gráficos en R se pueden realizar de forma básica usando las funciones integradas en el lenguaje o avanzada con el paquete ggplot2.
+Los gráficos en R se pueden realizar de forma básica usando las funciones integradas en el lenguaje o avanzada con el paquete ggplot2.
 
 ```{r}
 if(!require("AER")) {install.packages("AER")}
-#data(package="AER")
-#library(AER)
 data("CPS1985")
 ```
 Histograma
 ```{r}
-attach(CPS1985)   # acceder directamente a las variables (columnas)
+attach(CPS1985)
 hist(wage,
-     breaks = 20,   # número de intervalos
-     main = "Distribución del Salario (dólares por hora)",    # título del gráfico
-     xlab = "Salario",                                        # título del eje x
-     ylab = "Número de personas",                              # título del eje y
-     xlim = c(0,50),                      # rango de valores del eje x
-     col = "blue",                        # color de relleno
-     border = "white"                     # color del borde del rectángulo
-     )
-```
-```{r}
-hist(wage,
-     breaks = 20,   
-     main = "Distribución del Salario (dólares por hora)", 
+     breaks = 30,   
+     main = "Distribución del Salario", 
      freq = FALSE,
      xlab = "Salario",                                          
-     ylab = "Frecuencia relativa (en tanto por uno)", 
+     ylab = "Frecuencia relativa", 
      xlim = c(0,50),
      ylim = c(0,0.15),
      col = "blue",
@@ -235,15 +222,16 @@ hist(wage,
 
 lines(density(wage), col="yellow", lwd=3)  # dibujamos la distribución normal empírica con los  datos que tenemos
 
-lines(density(wage, adjust=2), col="red", lwd=3, lty=2) # adjust=2 lo que hace es suavizar un poco la curva (probad con adjust=1 y adjust=5 para ver las diferencias).
+lines(density(wage, adjust=2), col="red", lwd=3, lty=2) # adjust=2 lo que hace es suavizar un poco la curva
 curve(dnorm(x, mean=mean(wage), sd=sd(wage)), add=TRUE, col="orange", lwd=3)  # aquí simulamos valores de una normal con la misma media y deviación típica que wage y la representamos.
 abline(v=mean(wage), lwd=2, lty=3, col="darkblue")    # añadimos posición de la media. Recordemos que e argumento "lwd"" hace referencia al grosor de la línea y "lty"" al tipo de línea.
 ```
 Boxplot
 ```{r}
 boxplot(wage ~ gender,
-        main = "Salario (dólares hora) según género",
+        main = "Salario según género",
         ylab = "Salario",
+        xlab = "Género",
         names = c("Hombres","Mujeres")   # cambiamos la etiqueta de la variable cualitativa
         )
 ```
@@ -264,12 +252,13 @@ boxplot(wage ~ occupation,
         pch = 20,        
         cex = 1,         
         horizontal = T,  
-        main = "Salario (dólares hora) según ocupación",
+        main = "Salario según ocupación",
         xlab = "Salario",
+        ylab = "Ocupación",
         yaxt = "n"              # elminamos el eje y
         )
 
-legend("bottomright", title="Salario (dólares hora)", levels(occupation), fill=b)
+legend("bottomright", title="Ocupación", levels(occupation), fill=b)
 ```
 Diagrama de dispersiòn
 ```{r}
@@ -278,9 +267,9 @@ sexo <- as.numeric(gender)
 plot (log(wage) ~ experience,
       pch = sexo,
       col = sexo,
-      main = "Salario (en logaritmos) en función de la experiencia",
-      xlab = "Experiencia (en años)",
-      ylab = "Salario (en logaritmos)"
+      main = "Salario en función de la experiencia",
+      xlab = "Experiencia (años)",
+      ylab = "Salario (logaritmos)"
       )
 
 with(CPS1985[gender=="male",], abline(lm(log(wage)~experience), col="red"))
@@ -311,7 +300,6 @@ barplot(p,
         legend=levels(ethnicity),
         names.arg= levels(gender),
         ylim=c(0,250)
-        
 )
 ```
 Grafico de sectores
@@ -325,7 +313,7 @@ pie(datos,
 Gráfico de mosaico
 
 ```{r}
-install.packages("vcd")
+if(!require("vcd")) {install.packages("vcd")}
 library(vcd)
 datos <- ftable(occupation, ethnicity, gender)
 mosaic(~ occupation + ethnicity + gender , dat=datos, las=1)
@@ -333,7 +321,7 @@ mosaic(~ occupation + ethnicity + gender , dat=datos, las=1)
 Violinplot
 
 ```{r}
-install.packages("vioplot")
+if(!require("vioplot")) {install.packages("vioplot")}
 library(vioplot)
 x <- c(6, 9, 0, 19, -1, 8, 12, 5, 3, 7,
        2, 4, 3, -8, -9, 8, 4, 12, 5, 14)
@@ -352,6 +340,9 @@ vioplot(x,
 ```{r}
 data <- chickwts
 
+vioplot(data$weight ~ data$feed, col = 2:length(levels(data$feed)),
+        xlab = "Feed", ylab = "Weight")
+
 stripchart(data$weight ~ data$feed, vertical = TRUE, method = "jitter",
            pch = 19, add = TRUE, col = 3:8)
 ```
@@ -360,7 +351,7 @@ stripchart(data$weight ~ data$feed, vertical = TRUE, method = "jitter",
 Ahora, veremos los gràficos con ggplot2:
 
 ```{r}
-install.packages("ggplot2")
+if(!require("ggplot2")) {install.packages("ggplot2")}
 library(ggplot2)
 ```
 
@@ -370,6 +361,7 @@ ggplot(CPS1985, aes(x=wage)) +
   geom_histogram(bins=20, color="white", fill="blue") +
   facet_grid(gender~.)
 ```
+
 ```{r}
 ggplot(CPS1985, aes(x=wage)) + 
   geom_histogram(aes(y=..density..), bins=20, color="white", fill="grey") + 
@@ -380,4 +372,54 @@ ggplot(CPS1985, aes(x=wage)) +
   expand_limits(y=0)
 ```
 
+```{r}
+if(!require("hexbin")) {install.packages("hexbin")}
+library(hexbin)
+ggplot(CPS1985, aes(experience,log(wage))) +
+  geom_hex() +
+  labs(title="Diagrama de dispersión",
+       subtitle= "ScatterPlot",
+       caption="Fuente: CPS1985 (paquete AER)",
+       x="Experiencia (en años)",
+       y="Salario (en logaritmo)") +
+  scale_fill_gradient("Empleados", low="orange", high="orange4") +  # nombres en colors()
+  theme_classic()
+```
+
+
+```{r}
+ggplot(CPS1985, aes(experience,log(wage), color=gender)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE) +  
+  labs(title="Diagrama de dispersión",
+       subtitle= "ScatterPlot",
+       caption="Fuente: CPS1985 (paquete AER)",
+       x="Experiencia (en años)",
+       y="Salario (en logaritmo)") +
+  scale_color_discrete("Género", labels=c("Hombre","Mujer"))
+```
+
+```{r}
+ggplot(CPS1985, aes(x=gender, y=wage, fill=gender) ) +
+  geom_boxplot(alpha=0.3, outlier.colour = "blue") +
+  labs(x="Género", y="Salario") +
+  scale_x_discrete(labels=c("Hombre","Mujer")) +
+  guides(fill=FALSE) +
+  coord_flip() +              
+  geom_point(stat= "summary", fun.y=mean, shape=16, size=4, color="red") +
+  geom_jitter(width = 0.1, alpha = 0.2)
+```
+
+```{r}
+ggplot(CPS1985, aes(ethnicity, fill=gender)) +
+  geom_bar() +
+  labs(title="Diagrama de barras", x= "Raza", y="Empleados") +
+  scale_x_discrete(labels=c("Caucásico", "Hispano", "Otros")) +
+  scale_fill_brewer(palette = "Accent","Género",labels=c("Hombre","Mujer")) +
+  geom_text(stat='count',aes(label=..count..),
+            position = "stack",
+            vjust=1,
+            size=2,
+            color="black")
+```
 
