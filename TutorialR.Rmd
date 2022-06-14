@@ -209,17 +209,33 @@ sd(muestra) # Usando la misma variable hallamos la muestra correspondiente.
 var(muestra)
 ```
 
-5-      Funciones en R. Ejemplos de utilización. Implemente una función en R de su elección. Explique paso a paso la función y la manera en que retorna los valores finales. Explique también como invocar la función
-```{r}
+# 5. Funciones en R. Ejemplos de utilización.
 
+Es un objeto que se encarga de procesar las entradas en resultados.
+
+```{r}
+operation <- function(a, b){
+  r1 <- a + b
+  r2 <- min(c(a, b))
+  result <- list(suma=r1, mini=r2)
+  return(result)
+}
+
+operation(a=8, b=12)
 ```
 
-6-      Manejo de archivos con R
-```{r}
+# 6. Manejo de archivos con R
+Para el manejo de archivos y directorio de trabajo con R encontramos diversas funciones las cuales nos pueden ser utiles.
 
+```{r}
+getwd() # Esta función nos permite obtener el directorio en el que estamos trabajando actualmente.
+setwd('dir/') # Con esta función podemos establecer la ruta hacia un directorio específico de nuestra preferencia.
+write.csv(x, "filename.csv") # Esta función nos permite crear un archivo tipo csv teniendo como argumento x como la data a guardar y el nombre del archivo junto con su extensión.
+read.csv("filename.csv") # Con esta función podemos leer el contenido de un archivo tipo csv
+dir.create("dir") # Nos permite la creación de una nueva carpeta situada en nuestro wd
 ```
 
-7-      Ejemplos de visualización de datos: Gráficas diversas incluyendo dispersión de puntos, histogramas, diagrama de cajas (bloxpots), violinplots, etc.
+# 7. Ejemplos de visualización de datos: Gráficas diversas incluyendo dispersión de puntos, histogramas, diagrama de cajas (bloxpots), violinplots, etc.
 
 Los gráficos en R se pueden realizar de forma básica usando las funciones integradas en el lenguaje o avanzada con el paquete ggplot2.
 
