@@ -182,9 +182,31 @@ intersect(mi_lista, mi_lista2)
 setdiff(mi_lista, mi_lista2)
 ```
 
-4-      Dataframes. Visualización y manipulación. Ejemplo utilización dataframe. Encuentro un dataset en internet o que se encuentre disponible en alguna librería en R y utilice la funcionalidad del dataframe para extraer información del dataset. Utilice las funciones promedio, desviación estándar, varianza para resumir la información en el dataframe.
-```{r}
+# 4. Dataframes. Visualización y manipulación.
 
+Los Dataframes son objetos que almacenan diferentes tipos de datos en R.
+
+```{r}
+# Descarga el archivo en el directorio de trabajo. El primer argumento corresponde al enlace de descarga directa y el segundo al nombre asignado al archivo tras la descarga
+download.file('https://www.dropbox.com/s/pyg5iu71xme2qnq/grados.xlsx?dl=1', 'grados.xlsx')
+
+library(readxl) # librería que permite leer archivos de excel
+grados <- read_excel("grados.xlsx") # Habiendo ubicado el directorio de trabajo
+grados <- as.data.frame(grados)
+head(grados) # Para obtener las primeras filas del dataframe
+tail(grados) # Para obtener las ultimas filas del dataframe
+
+```
+```{r}
+# Para encontrar la media de una muestra de datos de un dataframe tan solo es necesario usar la siguiente función.
+muestra <- grados$Edad # Obtendremos la media de una columna en específico.
+mean(muestra)
+
+# Para encontrar la desviación estandar.
+sd(muestra) # Usando la misma variable hallamos la muestra correspondiente.
+
+# Para hallar la varianza de una muestra.
+var(muestra)
 ```
 
 5-      Funciones en R. Ejemplos de utilización. Implemente una función en R de su elección. Explique paso a paso la función y la manera en que retorna los valores finales. Explique también como invocar la función
