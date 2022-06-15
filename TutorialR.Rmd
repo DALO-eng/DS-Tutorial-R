@@ -3,6 +3,14 @@ title: "Tutorial de R"
 output: html_notebook
 ---
 
+Autores:
+
+    Romario Gualdron
+  
+    Daniel Leon
+  
+    Javier Rivera
+
 # 0. Conceptos básicos
 
 Antes de comenzar el tutorial, debemos recordar como se declaran e inicializan las variables en el lenguaje de programación R.
@@ -228,7 +236,8 @@ Para el manejo de archivos y directorio de trabajo con R encontramos diversas fu
 
 ```{r}
 getwd() # Esta función nos permite obtener el directorio en el que estamos trabajando actualmente.
-setwd('dir/') # Con esta función podemos establecer la ruta hacia un directorio específico de nuestra preferencia.
+# setwd('dir/') # Con esta función podemos establecer la ruta hacia un directorio específico de nuestra preferencia.
+x=c(1,2)
 write.csv(x, "filename.csv") # Esta función nos permite crear un archivo tipo csv teniendo como argumento x como la data a guardar y el nombre del archivo junto con su extensión.
 read.csv("filename.csv") # Con esta función podemos leer el contenido de un archivo tipo csv
 dir.create("dir") # Nos permite la creación de una nueva carpeta situada en nuestro wd
@@ -257,19 +266,18 @@ hist(wage,
      border = "white"
      )
 
-lines(density(wage), col="yellow", lwd=3)  # dibujamos la distribución normal empírica con los  datos que tenemos
-
-lines(density(wage, adjust=2), col="red", lwd=3, lty=2) # adjust=2 lo que hace es suavizar un poco la curva
-curve(dnorm(x, mean=mean(wage), sd=sd(wage)), add=TRUE, col="orange", lwd=3)  # aquí simulamos valores de una normal con la misma media y deviación típica que wage y la representamos.
-abline(v=mean(wage), lwd=2, lty=3, col="darkblue")    # añadimos posición de la media. Recordemos que e argumento "lwd"" hace referencia al grosor de la línea y "lty"" al tipo de línea.
+lines(density(wage, adjust=2), col="orange", lwd=3, lty=2) 
+lines(density(wage), col="red", lwd=3)  # distribucion empirica
+curve(dnorm(x, mean=mean(wage), sd=sd(wage)), add=TRUE, col="green", lwd=3)  # distribucion simulada
+abline(v=mean(wage), lwd=2, lty=3, col="blue")    # posición de la media
 ```
 Boxplot
 ```{r}
 boxplot(wage ~ gender,
-        main = "Salario según género",
+        main = "Salario por género",
         ylab = "Salario",
         xlab = "Género",
-        names = c("Hombres","Mujeres")   # cambiamos la etiqueta de la variable cualitativa
+        names = c("Hombres","Mujeres")
         )
 ```
 ```{r}
@@ -289,28 +297,28 @@ boxplot(wage ~ occupation,
         pch = 20,        
         cex = 1,         
         horizontal = T,  
-        main = "Salario según ocupación",
+        main = "Salario por ocupación",
         xlab = "Salario",
         ylab = "Ocupación",
-        yaxt = "n"              # elminamos el eje y
+        yaxt = "n"              # eje y
         )
 
 legend("bottomright", title="Ocupación", levels(occupation), fill=b)
 ```
-Diagrama de dispersiòn
+Diagrama de dispersión
 ```{r}
 sexo <- as.numeric(gender)
 
 plot (log(wage) ~ experience,
       pch = sexo,
       col = sexo,
-      main = "Salario en función de la experiencia",
+      main = "Salario a partir de la experiencia",
       xlab = "Experiencia (años)",
       ylab = "Salario (logaritmos)"
       )
 
-with(CPS1985[gender=="male",], abline(lm(log(wage)~experience), col="red"))
 with(CPS1985[gender=="female",], abline(lm(log(wage)~experience), col="black"))
+with(CPS1985[gender=="male",], abline(lm(log(wage)~experience), col="red"))
 
 legend("topright", legend=c("Hombres","Mujeres"), pch=1:2, col=1:2, bty="y")
 ```
@@ -319,20 +327,20 @@ Diagrama de barras
 ```{r}
 educacion <- table(education)
 p <- barplot(educacion,
-        col = 1:dim(educacion),       # para establecer el número de diferentes colores                                       (=diferentes valores)
-        space = 0,                    # no espacio entre las barras
-        horiz = F,                    # orientación de las barras
-        density = 50 ,                # trama de las barras (se puede modificar el ángulo con                                     el argumento angle)
+        col = 1:dim(educacion),       
+        space = 0,                   
+        horiz = F,                    
+        density = 50 ,                                                  
         ylim = c(0,250)
         )
 
-title("Distribución de la edad", xlab= "Edad (en años)")
+title("Distribución de edad", xlab= "Edad (años)")
 text(p[,1],educacion,labels=educacion, pos=3,cex=0.75)
 ```
 ```{r}
 p <- table(ethnicity, gender) 
 barplot(p,
-        beside=T,  # si es FALSE apila
+        beside=T,  #  apila si es FALSE
         col=rainbow(3),
         legend=levels(ethnicity),
         names.arg= levels(gender),
@@ -384,79 +392,10 @@ stripchart(data$weight ~ data$feed, vertical = TRUE, method = "jitter",
            pch = 19, add = TRUE, col = 3:8)
 ```
 
+Bibliografía:
 
-Ahora, veremos los gràficos con ggplot2:
+        1. Videotutorial: https://youtu.be/vAl--JPLXno
 
-```{r}
-if(!require("ggplot2")) {install.packages("ggplot2")}
-library(ggplot2)
-```
-
-
-```{r}
-ggplot(CPS1985, aes(x=wage)) + 
-  geom_histogram(bins=20, color="white", fill="blue") +
-  facet_grid(gender~.)
-```
-
-```{r}
-ggplot(CPS1985, aes(x=wage)) + 
-  geom_histogram(aes(y=..density..), bins=20, color="white", fill="grey") + 
-  stat_function(fun = dnorm, colour = "red",
-                args = list(mean = mean(wage, na.rm = TRUE),
-                                 sd = sd(wage, na.rm = TRUE))) +
-  geom_line(stat="density", color="blue") +
-  expand_limits(y=0)
-```
-
-```{r}
-if(!require("hexbin")) {install.packages("hexbin")}
-library(hexbin)
-ggplot(CPS1985, aes(experience,log(wage))) +
-  geom_hex() +
-  labs(title="Diagrama de dispersión",
-       subtitle= "ScatterPlot",
-       caption="Fuente: CPS1985 (paquete AER)",
-       x="Experiencia (en años)",
-       y="Salario (en logaritmo)") +
-  scale_fill_gradient("Empleados", low="orange", high="orange4") +  # nombres en colors()
-  theme_classic()
-```
-
-
-```{r}
-ggplot(CPS1985, aes(experience,log(wage), color=gender)) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE) +  
-  labs(title="Diagrama de dispersión",
-       subtitle= "ScatterPlot",
-       caption="Fuente: CPS1985 (paquete AER)",
-       x="Experiencia (en años)",
-       y="Salario (en logaritmo)") +
-  scale_color_discrete("Género", labels=c("Hombre","Mujer"))
-```
-
-```{r}
-ggplot(CPS1985, aes(x=gender, y=wage, fill=gender) ) +
-  geom_boxplot(alpha=0.3, outlier.colour = "blue") +
-  labs(x="Género", y="Salario") +
-  scale_x_discrete(labels=c("Hombre","Mujer")) +
-  guides(fill=FALSE) +
-  coord_flip() +              
-  geom_point(stat= "summary", fun.y=mean, shape=16, size=4, color="red") +
-  geom_jitter(width = 0.1, alpha = 0.2)
-```
-
-```{r}
-ggplot(CPS1985, aes(ethnicity, fill=gender)) +
-  geom_bar() +
-  labs(title="Diagrama de barras", x= "Raza", y="Empleados") +
-  scale_x_discrete(labels=c("Caucásico", "Hispano", "Otros")) +
-  scale_fill_brewer(palette = "Accent","Género",labels=c("Hombre","Mujer")) +
-  geom_text(stat='count',aes(label=..count..),
-            position = "stack",
-            vjust=1,
-            size=2,
-            color="black")
-```
-
+        2. R para principiantes. Bookdown.  https://bookdown.org/jboscomendoza/r-principiantes4/introduccion-que-es-r-y-para-que-es-usado.html 
+    
+        3. Curso de introducción a R. UV. https://www.uv.es/vcoll/preliminares.html
