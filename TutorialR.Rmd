@@ -188,10 +188,9 @@ Los Dataframes son objetos que almacenan diferentes tipos de datos en R.
 
 ```{r}
 # Descarga el archivo en el directorio de trabajo. El primer argumento corresponde al enlace de descarga directa y el segundo al nombre asignado al archivo tras la descarga
-download.file('https://www.dropbox.com/s/pyg5iu71xme2qnq/grados.xlsx?dl=1', 'grados.xlsx')
-
-library(readxl) # librería que permite leer archivos de excel
-grados <- read_excel("grados.xlsx") # Habiendo ubicado el directorio de trabajo
+install.packages("openxlsx")
+library(openxlsx) # librería que permite leer archivos de excel
+grados <- read.xlsx("https://www.dropbox.com/s/pyg5iu71xme2qnq/grados.xlsx?dl=1")
 grados <- as.data.frame(grados)
 head(grados) # Para obtener las primeras filas del dataframe
 tail(grados) # Para obtener las ultimas filas del dataframe
